@@ -1,0 +1,19 @@
+{
+  "name": "Pocket Rider",
+  "short_name": "Pocket Rider",
+  "description": "A mobile-first delivery rider game.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#16251d",
+  "theme_color": "#16251d",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
