@@ -112,23 +112,12 @@ export function App() {
       </section>
 
       <section className="status" aria-live="polite">
-        <div className={game.hasPackage ? "package on" : "package"}>
-          {game.hasPackage ? "Pacco a bordo" : "Senza pacco"}
-        </div>
+        <span className={game.hasPackage ? "package on" : "package"}>
+          {game.hasPackage ? "Pacco" : "No pacco"}
+        </span>
         <p>
           <strong>{goalLabel}.</strong> {game.message}
         </p>
-      </section>
-
-      <section
-        className="swipe-pad"
-        aria-label="Controllo swipe"
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-      >
-        <div className="swipe-ring">
-          <span>Swipe</span>
-        </div>
       </section>
     </main>
   );
