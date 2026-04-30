@@ -1,15 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
-import { createGame, moveRider, type Direction, type GameState, type Tile } from "./game";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createGame, moveRider, type Direction, type GameState } from "./game";
 
-const directionLabels: Record<Direction, string> = {
-  up: "Su",
-  down: "Giu",
-  left: "Sinistra",
-  right: "Destra",
+type PointerStart = {
+  x: number;
+  y: number;
 };
 
 export function App() {
   const [game, setGame] = useState<GameState>(() => createGame());
+  const pointerStart = useRef<PointerStart | null>(null);
 
   function move(direction: Direction) {
     setGame((current) => moveRider(current, direction));
@@ -17,6 +16,27 @@ export function App() {
 
   function reset() {
     setGame(createGame());
+  }
+
+  function handlePointerDown(event: React.PointerEvent) {
+    pointerStart.current = { x: event.clientX, y: event.clientY };
+  }
+
+  function handlePointerUp(event: React.PointerEvent) {
+    const start = pointerStart.current;
+    pointerStart.current = null;
+    if (!start) return;
+
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    const distance = Math.hypot(dx, dy);
+    if (distance < 18) return;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      move(dx > 0 ? "right" : "left");
+    } else {
+      move(dy > 0 ? "down" : "up");
+    }
   }
 
   useEffect(() => {
@@ -55,9 +75,17 @@ export function App() {
           <span>Mosse</span>
           <strong>{game.moves}</strong>
         </div>
+        <button className="reset" onClick={reset}>
+          Reset
+        </button>
       </section>
 
-      <section className="board-wrap" aria-label="Mappa">
+      <section
+        className="board-wrap"
+        aria-label="Mappa"
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+      >
         <div className="board">
           {game.map.map((row, y) =>
             row.map((tile, x) => {
@@ -92,24 +120,16 @@ export function App() {
         </p>
       </section>
 
-      <section className="controls" aria-label="Controlli movimento">
-        <button className="control control-up" onClick={() => move("up")} aria-label={directionLabels.up}>
-          ↑
-        </button>
-        <button className="control control-left" onClick={() => move("left")} aria-label={directionLabels.left}>
-          ←
-        </button>
-        <button className="control control-down" onClick={() => move("down")} aria-label={directionLabels.down}>
-          ↓
-        </button>
-        <button className="control control-right" onClick={() => move("right")} aria-label={directionLabels.right}>
-          →
-        </button>
+      <section
+        className="swipe-pad"
+        aria-label="Controllo swipe"
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+      >
+        <div className="swipe-ring">
+          <span>Swipe</span>
+        </div>
       </section>
-
-      <button className="reset" onClick={reset}>
-        Nuova run
-      </button>
     </main>
   );
 }
